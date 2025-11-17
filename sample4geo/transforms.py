@@ -79,12 +79,12 @@ iaa_weather_list = [
     A.Compose([
         A.OneOf([
             A.GaussianBlur(blur_limit=(10, 12), p=0.5),
-            A.BlendAlphaOverlay(
-                overlay=A.Add(value=100),
-                overlay_bboxes=None,
-                alpha_limit=(0.4, 0.6),
-                always_apply=True
-            ),
+            # A.BlendAlphaOverlay(
+            #     overlay=A.Add(value=100),
+            #     overlay_bboxes=None,
+            #     alpha_limit=(0.4, 0.6),
+            #     always_apply=True
+            # ),
         ]),
         A.RandomBrightnessContrast(brightness_limit=(-0.3, -0.15), contrast_limit=(0.2, 0.2), p=1)
     ]),

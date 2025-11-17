@@ -62,7 +62,7 @@ class Configuration:
         parser.add_argument('--epochs', default=1, type=int, help='1 epoch for 1652')
         parser.add_argument('--batch_size', default=24, type=int, help='remember the bs is for 2 branches')
         parser.add_argument('--verbose', default=True, type=bool)
-        parser.add_argument('--gpu_ids', default=(0, 1, 2, 3), type=tuple)
+        parser.add_argument('--gpu_ids', default=(2, 3, 4, 5), type=tuple)
 
         # Eval Config
         parser.add_argument('--batch_size_eval', default=128, type=int)
@@ -92,7 +92,7 @@ class Configuration:
 
         # Dataset Config
         parser.add_argument('--dataset', default='U1652-D2S', type=str, help="'U1652-D2S' | 'U1652-S2D'")
-        parser.add_argument('--data_folder', default=r'/media/xiapanwang/主数据盘/xiapanwang/Codes/python/New_Geolocalization/0_Datasets', type=str)
+        parser.add_argument('--data_folder', default=r'/data0/chenqi_data', type=str)
         parser.add_argument('--dataset_name', default='U1652', type=str)
 
         # Augment Images Config
@@ -111,7 +111,7 @@ class Configuration:
         parser.add_argument('--num_workers', default=0 if os.name == 'nt' else 4, type=int)
 
         # Train on GPU if available Config
-        parser.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu', type=str)
+        parser.add_argument('--device', default='cuda:2' if torch.cuda.is_available() else 'cpu', type=str)
 
         # For better performance Config
         parser.add_argument('--cudnn_benchmark', default=True, type=bool)
@@ -128,15 +128,11 @@ class Configuration:
 config = Configuration()
 
 if config.dataset == 'U1652-D2S':
-    config.query_folder_train = f'{config.data_folder}/{config.dataset_name}/train/satellite'
-    config.gallery_folder_train = f'{config.data_folder}/{config.dataset_name}/train/drone'
-    config.query_folder_test = f'{config.data_folder}/{config.dataset_name}/test/query_drone'
-    config.gallery_folder_test = f'{config.data_folder}/{config.dataset_name}/test/gallery_satellite'
+    config.query_folder_test = '/data0/chenqi_data/University-Release/test/query_drone' 
+    config.gallery_folder_test = '/data0/chenqi_data/University-Release/test/gallery_satellite' 
 elif config.dataset == 'U1652-S2D':
-    config.query_folder_train = f'{config.data_folder}/{config.dataset_name}/train/satellite'
-    config.gallery_folder_train = f'{config.data_folder}/{config.dataset_name}/train/drone'
-    config.query_folder_test = f'{config.data_folder}/{config.dataset_name}/test/query_satellite'
-    config.gallery_folder_test = f'{config.data_folder}/{config.dataset_name}/test/gallery_drone'
+    config.query_folder_test = '/data0/chenqi_data/University-Release/test/query_satellite'
+    config.gallery_folder_test = '/data0/chenqi_data/University-Release/test/gallery_drone'
 
 if __name__ == '__main__':
     import warnings
@@ -216,8 +212,8 @@ if __name__ == '__main__':
     val_transforms, train_sat_transforms, train_drone_transforms = get_transforms(img_size, mean=mean, std=std)
 
     # Train
-    train_dataset = U1652DatasetTrain(query_folder=config.query_folder_train,
-                                      gallery_folder=config.gallery_folder_train,
+    train_dataset = U1652DatasetTrain(query_folder=None,
+                                      gallery_folder=None,
                                       transforms_query=train_sat_transforms,
                                       transforms_gallery=train_drone_transforms,
                                       prob_flip=config.prob_flip,

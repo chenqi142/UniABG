@@ -53,6 +53,13 @@ def train(train_config, model, dataloader, loss_functions, optimizer, epoch, tra
 
                 if torch.cuda.device_count() > 1 and len(train_config.gpu_ids) > 1:
                     loss = loss_functions["infoNCE"](features1, features2, model.module.logit_scale.exp())
+                    # 2. Classification
+                    loss_cls = cal_loss(features_cls_1, labels, criterion) + cal_loss(features_cls_2, labels, criterion)
+
+
+                    # 3. Domian Space Alignment Loss
+                    loss_DSA = loss_functions["DSA_loss"](features_dsa_1, features_dsa_2,
+                                                            model.module.logit_scale_blocks.exp())
                 else:
                     # 1. infoNCE
                     loss = loss_functions["infoNCE"](features1, features2, model.logit_scale.exp())
@@ -63,7 +70,7 @@ def train(train_config, model, dataloader, loss_functions, optimizer, epoch, tra
 
                     # 3. Domian Space Alignment Loss
                     loss_DSA = loss_functions["DSA_loss"](features_dsa_1, features_dsa_2,
-                                                          model.logit_scale_blocks.exp())
+                                                            model.logit_scale_blocks.exp())
 
 
                 lossall = train_config.weight_infonce * loss + train_config.weight_cls * loss_cls + train_config.weight_dsa * loss_DSA
@@ -138,7 +145,7 @@ def train(train_config, model, dataloader, loss_functions, optimizer, epoch, tra
                 tensorboard.add_scalar("Loss_Avg", losses.avg, steps)
                 tensorboard.add_scalar("Learning_Rate", optimizer.param_groups[0]['lr'], steps)
                 tensorboard.add_scalar("Learning_Rate_Temp", optimizer.param_groups[-1]['lr'], steps)
-                tensorboard.add_scalar("Temperature", model.logit_scale.detach().cpu().numpy(), steps)
+                tensorboard.add_scalar("Temperature", model.module.logit_scale.detach().cpu().numpy(), steps)
 
         step += 1
 

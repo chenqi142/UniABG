@@ -89,10 +89,10 @@ class Configuration:
 
         # Dataset Config
         parser.add_argument('--dataset', default='U1652-D2S', type=str, help="'U1652-D2S' | 'U1652-S2D'")
-        parser.add_argument('--altitude', default=300, type=int, help="150|200|250|300")
+        parser.add_argument('--altitude', default=200, type=int, help="150|200|250|300")
 
-        parser.add_argument('--data_folder', default=r'/media/xiapanwang/主数据盘/xiapanwang/Codes/python/New_Geolocalization/0_Datasets', type=str)
-        parser.add_argument('--dataset_name', default='SUES-200', type=str)
+        parser.add_argument('--data_folder', default=r'/data0/chenqi_data', type=str)
+        parser.add_argument('--dataset_name', default='SUES-200-512x512', type=str)
 
         # Augment Images Config
         parser.add_argument('--prob_flip', default=0.5, type=float, help='flipping the sat image and drone image simultaneously')
@@ -127,13 +127,9 @@ class Configuration:
 config = Configuration()
 
 if config.dataset == 'U1652-D2S':
-    config.query_folder_train = f'{config.data_folder}/{config.dataset_name}/Training/{config.altitude}/satellite'
-    config.gallery_folder_train = f'{config.data_folder}/{config.dataset_name}/Training/{config.altitude}/drone'
     config.query_folder_test = f'{config.data_folder}/{config.dataset_name}/Testing/{config.altitude}/query_drone'
     config.gallery_folder_test = f'{config.data_folder}/{config.dataset_name}/Testing/{config.altitude}/gallery_satellite'
 elif config.dataset == 'U1652-S2D':
-    config.query_folder_train = f'{config.data_folder}/{config.dataset_name}/Training/{config.altitude}/satellite'
-    config.gallery_folder_train = f'{config.data_folder}/{config.dataset_name}/Training/{config.altitude}/drone'
     config.query_folder_test = f'{config.data_folder}/{config.dataset_name}/Testing/{config.altitude}/query_satellite'
     config.gallery_folder_test = f'{config.data_folder}/{config.dataset_name}/Testing/{config.altitude}/gallery_drone'
 
@@ -216,8 +212,8 @@ if __name__ == '__main__':
     val_transforms, train_sat_transforms, train_drone_transforms = get_transforms(img_size, mean=mean, std=std)
 
     # Train
-    train_dataset = U1652DatasetTrain(query_folder=config.query_folder_train,
-                                      gallery_folder=config.gallery_folder_train,
+    train_dataset = U1652DatasetTrain(query_folder=None,
+                                      gallery_folder=None,
                                       transforms_query=train_sat_transforms,
                                       transforms_gallery=train_drone_transforms,
                                       prob_flip=config.prob_flip,

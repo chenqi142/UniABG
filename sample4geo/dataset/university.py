@@ -1,5 +1,6 @@
 import os
 import cv2
+import torch
 import numpy as np
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
@@ -10,6 +11,17 @@ import time
 import random
 from albumentations.core.transforms_interface import ImageOnlyTransform
 import imgaug.augmenters as iaa
+
+
+def get_data(path):
+    data = {}
+    for root, dirs, files in os.walk(path, topdown=False):
+        for name in dirs:
+            data[name] = {"path": os.path.join(root, name)}
+            for _, _, files in os.walk(data[name]["path"], topdown=False):
+                data[name]["files"] = files
+
+    return data
 
 
 def get_data(path):
@@ -34,29 +46,30 @@ class U1652DatasetTrain(Dataset):
                  shuffle_batch_size=128):
         super().__init__()
 
-        self.query_dict = get_data(query_folder)
-        self.gallery_dict = get_data(gallery_folder)
+        # self.query_dict = get_data(query_folder)
+        # self.gallery_dict = get_data(gallery_folder)
 
-        # use only folders that exists for both gallery and query
-        self.ids = list(set(self.query_dict.keys()).intersection(self.gallery_dict.keys()))
-        self.ids.sort()
-        self.map_dict = {i: self.ids[i] for i in range(len(self.ids))}
-        self.reverse_map_dict = {v: k for k, v in self.map_dict.items()}
+        # # use only folders that exists for both gallery and query
+        # self.ids = list(set(self.query_dict.keys()).intersection(self.gallery_dict.keys()))
+        # self.ids.sort()
+        # self.map_dict = {i: self.ids[i] for i in range(len(self.ids))}
+        # self.reverse_map_dict = {v: k for k, v in self.map_dict.items()}
 
-        self.pairs = []
+        # self.pairs = []
 
-        for idx in self.ids:
+        # for idx in self.ids:
 
-            query_img = "{}/{}".format(self.query_dict[idx]["path"],
-                                       self.query_dict[idx]["files"][0])
+        #     query_img = "{}/{}".format(self.query_dict[idx]["path"],
+        #                                self.query_dict[idx]["files"][0])
 
-            gallery_path = self.gallery_dict[idx]["path"]
-            gallery_imgs = self.gallery_dict[idx]["files"]
+        #     gallery_path = self.gallery_dict[idx]["path"]
+        #     gallery_imgs = self.gallery_dict[idx]["files"]
 
-            label = self.reverse_map_dict[idx]
+        #     label = self.reverse_map_dict[idx]
 
-            for g in gallery_imgs:
-                self.pairs.append((idx, label, query_img, "{}/{}".format(gallery_path, g)))
+        #     for g in gallery_imgs:
+        #         self.pairs.append((idx, label, query_img, "{}/{}".format(gallery_path, g)))
+        self.pairs = torch.load("/data1/chenqi/DAC/check_point/samples_epoch_5.pth")
 
         self.transforms_query = transforms_query
         self.transforms_gallery = transforms_gallery
@@ -67,7 +80,7 @@ class U1652DatasetTrain(Dataset):
 
     def __getitem__(self, index):
 
-        idx, label, query_img_path, gallery_img_path = self.samples[index]
+        idx, query_img_path, gallery_img_path = self.samples[index]
 
         # for query there is only one file in folder
         query_img = cv2.imread(query_img_path)
@@ -87,7 +100,7 @@ class U1652DatasetTrain(Dataset):
         if self.transforms_gallery is not None:
             gallery_img = self.transforms_gallery(image=gallery_img)['image']
 
-        return query_img, gallery_img, idx, label
+        return query_img, gallery_img, idx, idx
 
     def __len__(self):
         return len(self.samples)
@@ -126,7 +139,7 @@ class U1652DatasetTrain(Dataset):
             if len(pair_pool) > 0:
                 pair = pair_pool.pop(0)
 
-                idx, _, _, _ = pair
+                idx, _, _= pair
 
                 if idx not in idx_batch and pair not in pairs_epoch:
 
