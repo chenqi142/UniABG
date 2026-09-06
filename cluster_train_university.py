@@ -664,7 +664,7 @@ def main():
         torch.manual_seed(args.seed)
         cudnn.deterministic = True
     
-    # main_worker_stage1_intra_view(args)
+    main_worker_stage1_intra_view(args)
     main_worker_stage2_inter_view(args)
 
 def main_worker_stage1_intra_view(args):

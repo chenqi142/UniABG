@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite the paper below."
+type: software
+title: "UniABG"
+url: "https://github.com/chenqi142/UniABG"
+authors:
+  - family-names: "Chen"
+    given-names: "Cuiqun"
+  - family-names: "Chen"
+    given-names: "Qi"
+  - family-names: "Yang"
+    given-names: "Bin"
+  - family-names: "Zhang"
+    given-names: "Xingyi"
+preferred-citation:
+  type: conference-paper
+  title: "UniABG: Unified Adversarial View Bridging and Graph Correspondence for Unsupervised Cross-View Geo-Localization"
+  authors:
+    - family-names: "Chen"
+      given-names: "Cuiqun"
+    - family-names: "Chen"
+      given-names: "Qi"
+    - family-names: "Yang"
+      given-names: "Bin"
+    - family-names: "Zhang"
+      given-names: "Xingyi"
+  doi: "10.1609/aaai.v40i4.37272"
+  year: 2026
+  collection-title: "Proceedings of the AAAI Conference on Artificial Intelligence"
+  volume: 40
+  issue: 4
+  start: 2823
+  end: 2831
